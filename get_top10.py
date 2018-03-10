@@ -1,8 +1,10 @@
 import argparse
 import os
 import sys 
+import gc
 from nltk import word_tokenize,pos_tag
 from collections import defaultdict
+from operator import itemgetter
 
 """
 
@@ -61,14 +63,18 @@ def get_top10(tsv_dir,out_file,stop_words_file,k=10):
                 for topic in topics:
                     vocab[topic]+=1
 
+    topics_freq = [ (topic,vocab[topic]) for topic in vocab.keys()]
+    vocab = {}
+    gc.collect()
+    topics_freq.sort(reverse=True,key=itemgetter(-1))
 
-    print(k)
-    print(len(vocab))
-    for k in vocab:
-        print(k,' : ',vocab[k])
-
-
-
+    with open(out_file,'w') as out:
+        out.write('Top {} topics'.format(k))
+        out.write('\n')
+        for x in range(k):
+            out.write('{}) {} {}'.format(x+1,topics_freq[x][0],topics_freq[x][1]))
+            out.write('\n')
+    
 
 
 if __name__ == '__main__':
@@ -83,7 +89,7 @@ if __name__ == '__main__':
 
     if os.path.isdir(args['path']):
         if args['top']!= None:
-            get_top10(args['path'],args['out'],args['stopw'],args['top'])
+            get_top10(args['path'],args['out'],args['stopw'],int(args['top']))
         else:
             get_top10(args['path'],args['out'],args['stopw'])
     else:
