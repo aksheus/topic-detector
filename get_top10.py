@@ -17,11 +17,11 @@ def text_generator(tsv_file):
 	"""
 	    Args: path to tsv file
 
-	    Returns: text field in tsv file
+	    Returns: text field in tsv from tsv file
 	"""
 	with open(tsv_file,'r') as tsvin:
 		for row in tsvin:
-			yield row.split('\t')[-1]
+			yield row.split('\t')[-1].strip()
 
 
 def get_top10(tsv_dir,out_file):
