@@ -5,6 +5,7 @@ import gc
 from nltk import word_tokenize,pos_tag
 from collections import defaultdict
 from operator import itemgetter
+from multiprocessing import Pool
 
 """
 
@@ -15,16 +16,26 @@ from operator import itemgetter
        Returns: top 10 topics in the corpus
 """
 
+def get_filenames(tsv_dir):
+    for tsv_filename in os.listdir(tsv_dir):
+        yield os.path.join(tsv_dir,tsv_filename) 
 
-def text_generator(tsv_file):
+
+def get_topics_from_file(tsv_file):
     """
         Args: path to tsv file
 
         Returns: text field in tsv from tsv file
     """
-    with open(tsv_file,'r') as tsvin:
+    nouns = {'NN', 'NNS','NNPS'}
+    topics = []
+    with open(tsv_file,'r',errors='ignore') as tsvin:
         for row in tsvin:
-            yield row.split('\t')[-1].strip()
+            text = row.split('\t')[-1].strip()
+            tokens = word_tokenize(text)
+            topics += [token.lower() for token,tag in pos_tag(tokens) if tag in nouns]
+    return tuple(topics)
+
 
 def get_stop_words(stop_words_file):
     """
@@ -33,7 +44,7 @@ def get_stop_words(stop_words_file):
          Returns: set of stop words
     """
     stop_words = set()
-    with open(stop_words_file,'r') as stopw_file:
+    with open(stop_words_file,'r',errors='ignore') as stopw_file:
         for line in stopw_file:
             stop_words.add(line.strip())
     return stop_words
@@ -47,13 +58,21 @@ def get_top10(tsv_dir,out_file,stop_words_file,k=10):
          Returns: top k topics in out file, by default 10  
 
     """
-    nouns = {'NN', 'NNS','NNPS'} #NNP
+    #nouns = {'NN', 'NNS','NNPS'} #NNP
     stop_words = get_stop_words(stop_words_file)
+    pool = Pool()
     # later we will maintain vocab at length 10, by keeping it sorted at all times
     # saves a lot of memory
     vocab = defaultdict(lambda:0,{})
 
-    for tsv_filename in os.listdir(tsv_dir):
+    all_topics = pool.imap(get_topics_from_file,get_filenames(tsv_dir))
+
+    for topics in all_topics:
+        for topic in topics:
+            if topic not in stop_words:
+                vocab[topic]+=1
+
+    """for tsv_filename in os.listdir(tsv_dir):
         tsv_file = os.path.join(tsv_dir,tsv_filename)
         if os.path.isfile(tsv_file):
             for text in text_generator(tsv_file):
@@ -61,7 +80,7 @@ def get_top10(tsv_dir,out_file,stop_words_file,k=10):
                 topics = [token.lower() for token,tag in pos_tag(tokens) if tag in nouns]
                 topics = [topic for topic in topics if topic not in stop_words]
                 for topic in topics:
-                    vocab[topic]+=1
+                    vocab[topic]+=1"""
 
     topics_freq = [ (topic,vocab[topic]) for topic in vocab.keys()]
     vocab = {}
