@@ -6,7 +6,7 @@ from collections import defaultdict
 
 """
 
-       USAGE: python get_top10.py --path <path to directory containing .tsv files> --out <outfile> --stopw <path to stopwords file>
+       USAGE: python get_top10.py --path <path to directory containing .tsv files> --out <outfile> --stopw <path to stopwords file> [OPTIONAL] --top <top k topics default 10> 
 
        Example: python get_top10.py --path ./4  --out  ./top10from4.txt
 
@@ -25,6 +25,11 @@ def text_generator(tsv_file):
             yield row.split('\t')[-1].strip()
 
 def get_stop_words(stop_words_file):
+    """
+         Args: path to stop words file
+
+         Returns: set of stop words
+    """
     stop_words = set()
     with open(stop_words_file,'r') as stopw_file:
         for line in stopw_file:
@@ -33,8 +38,13 @@ def get_stop_words(stop_words_file):
 
 
 
-def get_top10(tsv_dir,out_file,stop_words_file):
+def get_top10(tsv_dir,out_file,stop_words_file,k=10):
+    """
+         Args: path to coprus, output file name, path to stop words file, return top k topics
 
+         Returns: top k topics in out file, by default 10  
+
+    """
     nouns = {'NN', 'NNS','NNPS'} #NNP
     stop_words = get_stop_words(stop_words_file)
     # later we will maintain vocab at length 10, by keeping it sorted at all times
@@ -51,6 +61,8 @@ def get_top10(tsv_dir,out_file,stop_words_file):
                 for topic in topics:
                     vocab[topic]+=1
 
+
+    print(k)
     print(len(vocab))
     for k in vocab:
         print(k,' : ',vocab[k])
@@ -61,14 +73,19 @@ def get_top10(tsv_dir,out_file,stop_words_file):
 
 if __name__ == '__main__':
     
-    parser = argparse.ArgumentParser(description='python get_top10.py --path <path to directory containing .tsv files> --out <outfile>')
+    parser = argparse.ArgumentParser(description='python get_top10.py --path <path to directory containing .tsv files> --out <outfile> --stopw <path to stopwords file> [OPTIONAL] --top <top k topics default 10')
     parser.add_argument('-p','--path',help='path to directory containing .tsv files',required=True)
     parser.add_argument('-o','--out',help='output file name',required=True)
-    parser.add_argument('-s','--stopw',help='output file name',required=True)
+    parser.add_argument('-s','--stopw',help='path to stopwords file',required=True)
+    parser.add_argument('-t','--top',help='[OPTIONAL] top k topics default 10',required=False)
+
     args= vars(parser.parse_args())
 
     if os.path.isdir(args['path']):
-        get_top10(args['path'],args['out'],args['stopw'])
+        if args['top']!= None:
+            get_top10(args['path'],args['out'],args['stopw'],args['top'])
+        else:
+            get_top10(args['path'],args['out'],args['stopw'])
     else:
         print('invalid directory for tsv file corpus, exiting with code 1')
         sys.exit(1)
