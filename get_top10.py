@@ -46,7 +46,7 @@ def get_top10(tsv_dir,out_file,stop_words_file):
         if os.path.isfile(tsv_file):
             for text in text_generator(tsv_file):
                 tokens = word_tokenize(text)
-                topics = [token for token,tag in pos_tag(tokens) if tag in nouns]
+                topics = [token.lower() for token,tag in pos_tag(tokens) if tag in nouns]
                 topics = [topic for topic in topics if topic not in stop_words]
                 for topic in topics:
                     vocab[topic]+=1
