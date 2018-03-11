@@ -19,7 +19,7 @@
   generates a topic or a shorter sequence that describes the topic.   
 
 ######################################################################################################################
-2) SUBMISSION DETAILS (Time Spent: 6+ hours approximately,30 mins to extract data, code run time: )
+2) SUBMISSION DETAILS (Time Spent Total: 6hrs+ approximately, 30 mins to extract data, code run time: 2hrs approx on all 270k)
 
 - For this submisison, I have implemented from scratch Strategy1 for both task1 and task2.
 
@@ -55,16 +55,64 @@
     USAGE: python get_top10.py --mode <task1 or task2> --path <path to directory or file> --out <out file name> --stopw <path to stopwords file> [OPTIONAL] --top <top k topics default 10>
 
 
+  PLEASE NOTE THAT, one could use the command for task1 to test multiple files for task2 if the test files are in a directory/folder.  
+
 - Results for Task1,
 
+  Top 10 topics
 
+	1) ubuntu 
+	2) install 
+	3) don 
+	4) file 
+	5) sudo 
+	6) installed 
+	7) work 
+	8) apt 
+	9) windows 
+	10) linux  
 
+- Results for Task2, 
+  
+   Subest of .tsv files used from 4: 8,11,79,80,81,82,83,83,85,86,266941
 
-- Results for Taks2,
+   Top 3 topics
+
+	1) ubuntu 
+	2) laptop 
+	3) devfs 
+
+  On file 256.tsv,
+
+    Topics,
+
+	1) love 
+	2) distro 
+	3) sears 
+	4) jdub 
+	5) apt 
+	6) dist 
+	7) upgrade 
+	8) takes 
+	9) care 
+
+ On file 66.tsv,
+
+    Topics,
+
+  	1) kernel 
+	2) sources 
+	3) org 
+	4) bit 
+	5) detail 
+	6) manual 
+
 
 
 
 - Code efficiency,
+
+  Initial code run time was unreasonable, so I utilized a combination of generators and parallel processing to implmenet Strategy1.
 
   
  

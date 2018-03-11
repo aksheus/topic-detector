@@ -1,12 +1,12 @@
 Top 10 topics
 
-1) file 
-2) ubuntu 
-3) http 
-4) windows 
-5) install 
-6) command 
-7) cd 
-8) system 
-9) files 
-10) package 
+1) ubuntu 
+2) install 
+3) don 
+4) file 
+5) sudo 
+6) installed 
+7) work 
+8) apt 
+9) windows 
+10) linux 
