@@ -17,6 +17,12 @@ from multiprocessing import Pool
 """
 
 def get_filenames(tsv_dir):
+    """
+         Args: directory containing corpus
+
+         Returns: files ireratively
+
+    """
     for tsv_filename in os.listdir(tsv_dir):
         yield os.path.join(tsv_dir,tsv_filename) 
 
@@ -25,7 +31,7 @@ def get_topics_from_file(tsv_file):
     """
         Args: path to tsv file
 
-        Returns: text field in tsv from tsv file
+        Returns: candidate topics from file
     """
     nouns = {'NN', 'NNS','NNPS'}
     topics = []
@@ -58,11 +64,8 @@ def get_top10(tsv_dir,out_file,stop_words_file,k=10):
          Returns: top k topics in out file, by default 10  
 
     """
-    #nouns = {'NN', 'NNS','NNPS'} #NNP
     stop_words = get_stop_words(stop_words_file)
     pool = Pool()
-    # later we will maintain vocab at length 10, by keeping it sorted at all times
-    # saves a lot of memory
     vocab = defaultdict(lambda:0,{})
 
     all_topics = pool.imap(get_topics_from_file,get_filenames(tsv_dir))
@@ -72,16 +75,6 @@ def get_top10(tsv_dir,out_file,stop_words_file,k=10):
             if topic not in stop_words:
                 vocab[topic]+=1
 
-    """for tsv_filename in os.listdir(tsv_dir):
-        tsv_file = os.path.join(tsv_dir,tsv_filename)
-        if os.path.isfile(tsv_file):
-            for text in text_generator(tsv_file):
-                tokens = word_tokenize(text)
-                topics = [token.lower() for token,tag in pos_tag(tokens) if tag in nouns]
-                topics = [topic for topic in topics if topic not in stop_words]
-                for topic in topics:
-                    vocab[topic]+=1"""
-
     topics_freq = [ (topic,vocab[topic]) for topic in vocab.keys()]
     vocab = {}
     gc.collect()
@@ -90,8 +83,10 @@ def get_top10(tsv_dir,out_file,stop_words_file,k=10):
     with open(out_file,'w') as out:
         out.write('Top {} topics'.format(k))
         out.write('\n')
+        #out.write('Index Topic Occurences')
+        out.write('\n')
         for x in range(k):
-            out.write('{}) {} {}'.format(x+1,topics_freq[x][0],topics_freq[x][1]))
+            out.write('{}) {} '.format(x+1,topics_freq[x][0]))
             out.write('\n')
     
 

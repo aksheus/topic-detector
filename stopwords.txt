@@ -693,3 +693,11 @@ nightmare
 ask
 inquire
 question
+help
+helps
+aid
+solution
+answer
+assist
+reply
+response
