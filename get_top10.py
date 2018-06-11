@@ -83,7 +83,7 @@ def get_top10(mode,tsv_path,out_file,stop_words_file,k=10):
 
     topics_freq = [ (topic,vocab[topic]) for topic in vocab.keys()]
     vocab = {}
-    gc.collect()
+    #gc.collect()
     topics_freq.sort(reverse=True,key=itemgetter(-1))
 
     with open(out_file,'w') as out:
